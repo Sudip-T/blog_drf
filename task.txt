@@ -1,0 +1,21 @@
+Authentication : 
+- probably override default auth model and use email instead
+- Register - through user, email and password
+- Login - Post => email and password - generate auth token
+- Logout - Post => destroy auth token
+
+
+Blog :
+- CRUD operations
+- Get/Retrieve - Readonly
+- Post, Put, Delete - require authentication
+- Put and Delete - assocaited author only
+
+
+1. project setup
+2. implement authentication
+3. blog_app implementation
+4. implement permissions
+5. pagination, search and filter functionalities
+6. unit testing
+7. API documentation
