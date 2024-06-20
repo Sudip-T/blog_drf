@@ -14,8 +14,8 @@ Blog :
 
 1. project setup
 2. implement authentication
-3. blog_app implementation
-4. implement permissions
-5. pagination, search and filter functionalities
-6. unit testing
+3. authentication unit test
+4. blog_app implementation
+5. blog_app unit test
+6. pagination, search and filter functionalities
 7. API documentation

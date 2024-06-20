@@ -1,7 +1,9 @@
 from .models import BlogPost
-from .utility import IsOwnerOrReadOnly
 from .serializers import BlogPostSerializer
 from rest_framework import generics, permissions
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from .utility import IsOwnerOrReadOnly, CustomPagination
 
 
 class BlogPostListCreate(generics.ListCreateAPIView):
@@ -15,6 +17,10 @@ class BlogPostListCreate(generics.ListCreateAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['author']
+    search_fields = ['title', 'content']
+    pagination_class = CustomPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
