@@ -7,38 +7,32 @@ from rest_framework.authtoken.models import Token
 User = get_user_model()
 
 
-
 class UserRegistrationViewTestCase(APITestCase):
     def setUp(self):
         self.url = reverse('register')
+        self.data = {
+            'email': 'blog_test@blog.com',
+            'password': 'blog_test@!',
+            'confirm_password': 'blog_test@!'
+        }
 
     def test_user_registration(self):
-        data = {
-            'email': 'blog_test@blog.com',
-            'password': 'blog_test@!',
-            'confirm_password': 'blog_test@!'
-        }
-        response = self.client.post(self.url, data, format='json')
+        response = self.client.post(self.url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn('token', response.data)
-        user = User.objects.get(email=data['email'])
-        self.assertTrue(user.check_password(data['password']))
+        user = User.objects.get(email=self.data['email'])
+        self.assertTrue(user.check_password(self.data['password']))
 
     def test_user_registration_existing_email(self):
-        User.objects.create_user(email='blog_test@blog.com', password='blog_test@!')
-        data = {
-            'email': 'blog_test@blog.com',
-            'password': 'blog_test@!',
-            'confirm_password': 'blog_test@!'
-        }
-        response = self.client.post(self.url, data, format='json')
+        User.objects.create_user(email=self.data['email'], password=self.data['password'])
+        response = self.client.post(self.url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('email', response.data)
 
     def test_user_registration_password_mismatch(self):
         data = {
-            'email': 'blog_test@blog.com',
-            'password': 'blog_test@!',
+            'email': self.data['email'],
+            'password': self.data['password'],
             'confirm_password': 'blog_test@!000'
         }
         response = self.client.post(self.url, data, format='json')
@@ -49,21 +43,21 @@ class UserRegistrationViewTestCase(APITestCase):
 
 class UserLoginViewTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(email='blog_test@blog.com', password='blog_test@')
-        self.url = reverse('login_token')
-
-    def test_user_login(self):
-        data = {
+        self.data = {
             'email': 'blog_test@blog.com',
             'password': 'blog_test@'
         }
-        response = self.client.post(self.url, data, format='json')
+        self.user = User.objects.create_user(email=self.data['email'], password=self.data['password'])
+        self.url = reverse('login_token')
+
+    def test_user_login(self):
+        response = self.client.post(self.url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('token', response.data)
 
     def test_user_login_invalid_password(self):
         data = {
-            'email': 'blog_test@blog.com',
+            'email': self.data['email'],
             'password': 'dshdhsdhsd'
         }
         response = self.client.post(self.url, data, format='json')
@@ -73,7 +67,7 @@ class UserLoginViewTestCase(APITestCase):
     def test_user_login_nonexistent_user(self):
         data = {
             'email': 'fjkjfkfjskf@example.com',
-            'password': 'dsdjksdkjs'
+            'password': self.data['password']
         }
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
