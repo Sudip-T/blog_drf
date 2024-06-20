@@ -10,7 +10,7 @@ class BlogPost(models.Model):
     content = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    image = models.ImageField(upload_to='media', blank=True, null=True)
+    image = models.ImageField(upload_to='blogs', blank=True, null=True)
 
     def __str__(self):
         return self.title
